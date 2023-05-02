@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ChangeHealthButton : MonoBehaviour
+public class ButtonChangeHealth : MonoBehaviour
 {
     private const int InvertInt = -1;
 
