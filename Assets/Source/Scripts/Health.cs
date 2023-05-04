@@ -4,26 +4,46 @@ using UnityEngine.Events;
 public class Health : MonoBehaviour
 {
     [SerializeField] private Player _player;
-    [SerializeField] private int _currentValue;
+    [SerializeField] private HealthView _view;
+    [SerializeField] private float _currentValue;
 
-    [SerializeField] private UnityEvent<int> _healthChanged;
-
+    public float CurrentValue { get { return _currentValue; } }
     private int _maxHealth => _player.MaxHealth;
+
+    public event UnityAction<float> HealthChanged;
 
     private void Start()
     {
         _currentValue = _maxHealth;
-        _healthChanged?.Invoke(_currentValue);
+        HealthChanged?.Invoke(_currentValue);
     }
 
-    public void TryChangeHealth(int value)
+    public void TryTakeDamage(int value)
     {
-        if ((value == 0) == false)
+        if (value > 0 && _currentValue > 0)
         {
-            _currentValue += value;
-            _currentValue = Mathf.Clamp(_currentValue, 0, _maxHealth);
+            float newHealth = _currentValue;
+            newHealth -= value;
 
-            _healthChanged?.Invoke(_currentValue);
+            ChangeHealth(newHealth);
         }
+    }
+
+    public void TryTreatment(int value)
+    {
+        if (value > 0 && _currentValue < _maxHealth)
+        {
+            float newHealth = _currentValue;
+            newHealth += value;
+
+            ChangeHealth(newHealth);
+        }
+    }
+
+    private void ChangeHealth(float newHealth)
+    {
+        _currentValue = Mathf.Clamp(newHealth, 0, _maxHealth);
+
+        HealthChanged?.Invoke(_currentValue);
     }
 }
